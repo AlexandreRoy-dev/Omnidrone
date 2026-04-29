@@ -4,278 +4,436 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OMNIDRONE S&B | Services de Drone Professionnels à Sherbrooke</title>
+    <meta name="description" content="Services de drone professionnels à Sherbrooke : photographie aérienne, vidéo 4K, inspection de toiture et modélisation 3D (photogrammétrie).">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        tech: {
-                            dark: '#0f172a',
-                            card: '#1e293b',
-                            accent: '#06b6d4', // Cyan
-                            accentHover: '#0891b2'
+                        drone: {
+                            cyan: '#00f2ff',
+                            blue: '#0066ff',
+                            dark: '#020617',
+                            card: '#0f172a'
                         }
                     },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 5s ease-in-out infinite',
+                        'scan': 'scan 8s linear infinite',
+                        'spin-slow': 'spin 12s linear infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0) rotate(0deg)' },
+                            '50%': { transform: 'translateY(-20px) rotate(2deg)' },
+                        },
+                        scan: {
+                            '0%': { top: '-100%' },
+                            '100%': { top: '100%' }
+                        }
                     }
                 }
             }
         }
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        /* High-tech glow effect */
-        .glow:hover { box-shadow: 0 0 20px rgba(6, 182, 212, 0.4); }
-        .hero-bg {
-            background-image: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.95)), url('https://images.unsplash.com/photo-1473968512647-3e447244af8f?q=80&w=2070&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
+        body { font-family: 'Inter', sans-serif; background-color: #020617; }
+        h1, h2, h3, .font-tech { font-family: 'Orbitron', sans-serif; }
+
+        /* Effet de lueur qui suit la souris */
+        #cursor-blur {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 242, 255, 0.05) 0%, rgba(0, 0, 0, 0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
         }
+
+        /* Scanline effect */
+        .scanline {
+            width: 100%;
+            height: 100px;
+            z-index: 10;
+            background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(0,242,255,0.05) 50%, rgba(0,0,0,0) 100%);
+            opacity: 0.1;
+            position: absolute;
+            pointer-events: none;
+        }
+
+        /* Reveal animations */
+        .reveal { opacity: 0; transform: translateY(50px) scale(0.95); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0) scale(1); }
+
+        .service-card:hover, .gallery-item:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.2);
+        }
+
+        .glass { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); }
+        .glass-input { background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(8px); border: 1px solid rgba(0, 242, 255, 0.2); color: white; transition: all 0.3s; }
+        .glass-input:focus { border-color: #00f2ff; box-shadow: 0 0 15px rgba(0, 242, 255, 0.3); outline: none; }
+
+        /* FAQ Accordion styles */
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+        details[open] summary ~ * { animation: slideDown 0.4s ease-out; }
+        details[open] summary .fa-chevron-down { transform: rotate(180deg); color: #00f2ff; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="bg-tech-dark text-slate-300 antialiased selection:bg-tech-accent selection:text-white">
+<body class="text-slate-300 antialiased overflow-x-hidden selection:bg-drone-cyan selection:text-drone-dark">
 
-<nav class="fixed w-full z-50 bg-tech-dark/90 backdrop-blur-md border-b border-slate-800 transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <a href="#accueil" class="flex items-center gap-2 hover:opacity-80 transition-opacity py-2">
-                    <img src="logo.png" alt="OMNIDRONE S&B Logo" class="h-19 w-auto object-contain">
-                </a>
-                
-                <div class="hidden md:flex space-x-8 items-center">
-                    <a href="#accueil" class="hover:text-tech-accent transition-colors font-medium">Accueil</a>
-                    <a href="#services" class="hover:text-tech-accent transition-colors font-medium">Services</a>
-                    <a href="#offre" class="hover:text-tech-accent transition-colors font-medium text-orange-400">Offre 🔥</a>
-                    <a href="#apropos" class="hover:text-tech-accent transition-colors font-medium">À propos</a>
-                    <a href="#contact" class="bg-tech-accent hover:bg-tech-accentHover text-white px-5 py-2 rounded-md font-semibold transition-all">Contact</a>
+    <div id="cursor-blur"></div>
+
+    <nav class="fixed w-full z-50 transition-all duration-500 py-4 px-6">
+        <div class="max-w-7xl mx-auto flex justify-between items-center glass rounded-2xl px-6 py-3 border-drone-cyan/20">
+            <a href="#accueil" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 bg-drone-cyan rounded-lg flex items-center justify-center animate-pulse group-hover:shadow-[0_0_20px_rgba(0,242,255,0.8)] transition-all">
+                    <i class="fa-solid fa-plane-up text-drone-dark text-xl transform group-hover:rotate-45 transition-transform"></i>
                 </div>
-                <div class="md:hidden flex items-center">
-                    <button id="mobile-menu-btn" class="text-slate-300 hover:text-white focus:outline-none">
-                        <i class="fa-solid fa-bars text-2xl"></i>
-                    </button>
-                </div>
+                <span class="font-tech text-white tracking-tighter text-xl">OMNIDRONE <span class="text-drone-cyan text-sm">S&B</span></span>
+            </a>
+            
+            <div class="hidden lg:flex space-x-6 items-center font-tech text-xs uppercase tracking-widest">
+                <a href="#services" class="hover:text-drone-cyan transition-colors">Services</a>
+                <a href="#apropos" class="hover:text-drone-cyan transition-colors">Équipement</a>
+                <a href="#galerie" class="hover:text-drone-cyan transition-colors">Réalisations</a>
+                <a href="#faq" class="hover:text-drone-cyan transition-colors">FAQ</a>
+                <a href="#offre" class="text-orange-500 hover:text-orange-400 transition-colors">Offre 🔥</a>
+                <a href="#contact" class="bg-drone-cyan text-drone-dark px-6 py-2 rounded-full font-bold hover:scale-105 hover:shadow-[0_0_20px_rgba(0,242,255,0.4)] transition-all ml-4">Contact</a>
             </div>
-        </div>
-        <div id="mobile-menu" class="hidden md:hidden bg-tech-card border-b border-slate-700">
-            <a href="#accueil" class="block px-4 py-3 hover:bg-slate-700">Accueil</a>
-            <a href="#services" class="block px-4 py-3 hover:bg-slate-700">Services</a>
-            <a href="#offre" class="block px-4 py-3 hover:bg-slate-700 text-orange-400">Offre</a>
-            <a href="#apropos" class="block px-4 py-3 hover:bg-slate-700">À propos</a>
-            <a href="#contact" class="block px-4 py-3 bg-tech-accent text-white font-bold text-center">Contact</a>
+            
+            <button id="mobile-menu-btn" class="lg:hidden text-drone-cyan hover:scale-110 transition-transform"><i class="fa-solid fa-bars-staggered text-2xl"></i></button>
         </div>
     </nav>
 
-    <section id="accueil" class="hero-bg min-h-screen flex items-center pt-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-            <div class="max-w-3xl">
-                <div class="inline-block px-4 py-1.5 rounded-full border border-tech-accent/30 bg-tech-accent/10 text-tech-accent text-sm font-semibold mb-6 uppercase tracking-widest">
-                    La vision d'en haut
-                </div>
-                <h1 class="text-5xl md:text-6xl font-extrabold text-white leading-tight mb-6">
-                    Donnez une <span class="text-transparent bg-clip-text bg-gradient-to-r from-tech-accent to-blue-500">nouvelle dimension</span> à vos projets.
-                </h1>
-                <p class="text-xl text-slate-400 mb-8 max-w-2xl">
-                    Des images aériennes professionnelles pour les entreprises, l'immobilier et la construction. Démarquez-vous avec des visuels de haute qualité.
-                </p>
-                
-                <div class="flex flex-wrap gap-4 mb-10">
-                    <div class="flex items-center gap-2 bg-tech-card px-4 py-2 rounded-md border border-slate-700">
-                        <i class="fa-solid fa-video text-tech-accent"></i> Vidéos drone
-                    </div>
-                    <div class="flex items-center gap-2 bg-tech-card px-4 py-2 rounded-md border border-slate-700">
-                        <i class="fa-solid fa-camera text-tech-accent"></i> Photos immobilières
-                    </div>
-                    <div class="flex items-center gap-2 bg-tech-card px-4 py-2 rounded-md border border-slate-700">
-                        <i class="fa-solid fa-house-chimney text-tech-accent"></i> Inspection de toiture
-                    </div>
-                </div>
+    <section id="accueil" class="relative h-screen flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <video autoplay loop muted playsinline class="w-full h-full object-cover opacity-50 scale-110">
+                <source src="./bannervid.mov" type="video/mp4">
+            </video>
+            <div class="absolute inset-0 bg-gradient-to-b from-drone-dark/20 via-drone-dark/80 to-drone-dark"></div>
+            <div class="scanline animate-scan"></div>
+        </div>
 
-                <ul class="mb-10 space-y-2 text-slate-300">
-                    <li><i class="fa-solid fa-check text-green-400 mr-2"></i> Service rapide</li>
-                    <li><i class="fa-solid fa-check text-green-400 mr-2"></i> Prix abordables</li>
-                    <li><i class="fa-solid fa-check text-green-400 mr-2"></i> Résultat professionnel</li>
-                    <li class="mt-4"><i class="fa-solid fa-location-dot text-tech-accent mr-2"></i> Basé à Sherbrooke et environs</li>
-                </ul>
-
-                <a href="#contact" class="inline-flex items-center justify-center gap-2 bg-tech-accent hover:bg-tech-accentHover text-white px-8 py-4 rounded-md font-bold text-lg transition-all glow">
-                    Soumission gratuite <i class="fa-solid fa-arrow-right"></i>
+        <div class="relative z-10 text-center px-4 max-w-5xl mt-16">
+            <div class="reveal inline-block px-4 py-1 mb-6 rounded-full border border-drone-cyan/50 bg-drone-cyan/10 text-drone-cyan font-tech text-[10px] uppercase tracking-[0.3em] animate-pulse">
+                Services de drone professionnels • Sherbrooke
+            </div>
+            <h1 class="reveal text-5xl md:text-8xl font-bold text-white leading-none mb-8">
+                L'AVENIR EST <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-drone-cyan to-blue-500 drop-shadow-[0_0_15px_rgba(0,242,255,0.5)]">AÉRIEN</span>
+            </h1>
+            <p class="reveal text-lg md:text-xl text-slate-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+                Démarquez-vous grâce à notre expertise en captation de données aériennes. <br>
+                <span class="text-slate-500 font-tech text-sm mt-2 block tracking-widest">IMMOBILIER // CONSTRUCTION // INSPECTION</span>
+            </p>
+            
+            <div class="reveal flex flex-col sm:flex-row gap-6 justify-center items-center">
+                <a href="#contact" class="group relative px-10 py-5 bg-drone-cyan text-drone-dark font-tech font-bold rounded-xl overflow-hidden transition-all hover:scale-105 hover:shadow-[0_0_30px_rgba(0,242,255,0.4)]">
+                    <span class="relative z-10 flex items-center gap-2"><i class="fa-solid fa-envelope"></i> Obtenir une soumission</span>
+                    <div class="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-300 opacity-30"></div>
                 </a>
             </div>
         </div>
     </section>
 
-    <section id="services" class="py-24 bg-tech-dark">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Nos Services</h2>
-                <p class="text-slate-400">Des solutions technologiques adaptées à vos besoins avec un service personnalisé.</p>
+    <section id="services" class="py-24 relative z-10">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="reveal flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+                <div>
+                    <h2 class="text-4xl md:text-5xl font-bold text-white mb-2">NOS SERVICES</h2>
+                    <p class="text-drone-cyan font-tech tracking-widest uppercase text-sm">Solutions aériennes sur mesure</p>
+                </div>
+                <div class="h-px flex-grow bg-gradient-to-r from-drone-cyan/50 to-transparent mx-10 hidden md:block"></div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div class="bg-tech-card p-8 rounded-xl border border-slate-800 hover:border-tech-accent/50 transition-all glow group">
-                    <div class="h-14 w-14 bg-tech-dark rounded-lg flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-video text-2xl text-tech-accent"></i>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="reveal service-card glass p-8 rounded-3xl transition-all duration-500 group relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 font-tech text-6xl text-white/5 group-hover:text-drone-cyan/10 transition-colors">01</div>
+                    <div class="mb-6 w-14 h-14 rounded-2xl bg-drone-dark flex items-center justify-center border border-drone-cyan/30 group-hover:border-drone-cyan transition-colors">
+                        <i class="fa-solid fa-video text-xl text-drone-cyan group-hover:scale-110 transition-transform"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-white mb-3">Vidéo aérienne</h3>
-                    <p class="text-slate-400 text-sm">Mettez en valeur vos projets avec des vidéos dynamiques et professionnelles. Idéal pour présenter des envergures.</p>
+                    <h3 class="text-lg font-bold text-white mb-3 font-tech">Vidéo Aérienne 4K</h3>
+                    <p class="text-sm text-slate-400 leading-relaxed">Vidéos dynamiques de haute qualité pour la promotion immobilière, corporative et événementielle.</p>
                 </div>
-                <div class="bg-tech-card p-8 rounded-xl border border-slate-800 hover:border-tech-accent/50 transition-all glow group">
-                    <div class="h-14 w-14 bg-tech-dark rounded-lg flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-camera text-2xl text-tech-accent"></i>
+                <div class="reveal service-card glass p-8 rounded-3xl transition-all duration-500 group relative overflow-hidden" style="transition-delay: 100ms;">
+                    <div class="absolute -right-4 -top-4 font-tech text-6xl text-white/5 group-hover:text-drone-cyan/10 transition-colors">02</div>
+                    <div class="mb-6 w-14 h-14 rounded-2xl bg-drone-dark flex items-center justify-center border border-drone-cyan/30 group-hover:border-drone-cyan transition-colors">
+                        <i class="fa-solid fa-cubes text-xl text-drone-cyan group-hover:scale-110 transition-transform"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-white mb-3">Photographie drone</h3>
-                    <p class="text-slate-400 text-sm">Des clichés en ultra haute résolution. Parfait pour l'immobilier, les événements et l'image corporative de votre entreprise.</p>
+                    <h3 class="text-lg font-bold text-white mb-3 font-tech">Photogrammétrie</h3>
+                    <p class="text-sm text-slate-400 leading-relaxed">Modélisation 3D et cartographie précise pour le suivi de chantiers et l'arpentage.</p>
                 </div>
-                <div class="bg-tech-card p-8 rounded-xl border border-slate-800 hover:border-tech-accent/50 transition-all glow group">
-                    <div class="h-14 w-14 bg-tech-dark rounded-lg flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-house-circle-check text-2xl text-tech-accent"></i>
+                <div class="reveal service-card glass p-8 rounded-3xl transition-all duration-500 group relative overflow-hidden" style="transition-delay: 200ms;">
+                    <div class="absolute -right-4 -top-4 font-tech text-6xl text-white/5 group-hover:text-drone-cyan/10 transition-colors">03</div>
+                    <div class="mb-6 w-14 h-14 rounded-2xl bg-drone-dark flex items-center justify-center border border-drone-cyan/30 group-hover:border-drone-cyan transition-colors">
+                        <i class="fa-solid fa-house-chimney-crack text-xl text-drone-cyan group-hover:scale-110 transition-transform"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-white mb-3">Inspection de toiture</h3>
-                    <p class="text-slate-400 text-sm">Inspection rapide, sécuritaire et efficace. Obtenez des données précises sans aucun risque de monter sur le toit.</p>
+                    <h3 class="text-lg font-bold text-white mb-3 font-tech">Inspection de Toiture</h3>
+                    <p class="text-sm text-slate-400 leading-relaxed">Analyse structurelle rapide et sécuritaire. Rapport détaillé en très haute définition.</p>
                 </div>
-                <div class="bg-tech-card p-8 rounded-xl border border-slate-800 hover:border-tech-accent/50 transition-all glow group">
-                    <div class="h-14 w-14 bg-tech-dark rounded-lg flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-helmet-safety text-2xl text-tech-accent"></i>
+                <div class="reveal service-card glass p-8 rounded-3xl transition-all duration-500 group relative overflow-hidden" style="transition-delay: 300ms;">
+                    <div class="absolute -right-4 -top-4 font-tech text-6xl text-white/5 group-hover:text-drone-cyan/10 transition-colors">04</div>
+                    <div class="mb-6 w-14 h-14 rounded-2xl bg-drone-dark flex items-center justify-center border border-drone-cyan/30 group-hover:border-drone-cyan transition-colors">
+                        <i class="fa-solid fa-camera text-xl text-drone-cyan group-hover:scale-110 transition-transform"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-white mb-3">Projets commerciaux</h3>
-                    <p class="text-slate-400 text-sm">Surveillance de chantier étape par étape, modélisation, marketing visuel et suivi de progression de construction.</p>
+                    <h3 class="text-lg font-bold text-white mb-3 font-tech">Photographie HDR</h3>
+                    <p class="text-sm text-slate-400 leading-relaxed">Clichés aériens ultra-nets avec plage dynamique étendue, parfaits pour l'immobilier premium.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="offre" class="py-20 relative overflow-hidden">
-        <div class="absolute inset-0 bg-gradient-to-r from-orange-600/20 to-tech-dark"></div>
-        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L3N2Zz4=')]"></div>
-
-        <div class="max-w-4xl mx-auto px-4 relative z-10 text-center">
-            <span class="inline-block py-1 px-3 rounded-full bg-orange-500/20 border border-orange-500/50 text-orange-400 font-semibold mb-4">
-                🔥 OFFRE DE LANCEMENT SPÉCIALE
-            </span>
-            <h2 class="text-3xl md:text-5xl font-bold text-white mb-6">Première vidéo drone à seulement <span class="text-orange-400">99$</span></h2>
-            <p class="text-xl text-slate-300 mb-8">Profitez d'une réduction exclusive pour découvrir l'impact de nos services sur votre entreprise.</p>
-            
-            <div class="flex flex-col sm:flex-row justify-center items-center gap-6 mb-10">
-                <div class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-tech-accent"></i> Qualité professionnelle</div>
-                <div class="flex items-center gap-2"><i class="fa-solid fa-bolt text-tech-accent"></i> Livraison rapide</div>
-                <div class="flex items-center gap-2"><i class="fa-solid fa-shield-halved text-tech-accent"></i> Satisfaction garantie</div>
-            </div>
-
-            <p class="text-sm text-slate-400 mb-8"><i class="fa-solid fa-hourglass-half text-orange-400"></i> Offre limitée aux premiers clients</p>
-            
-            <a href="#contact" class="inline-block bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-md font-bold text-lg transition-all shadow-[0_0_15px_rgba(249,115,22,0.4)] hover:shadow-[0_0_25px_rgba(249,115,22,0.6)]">
-                <i class="fa-solid fa-envelope mr-2"></i> Réservez dès maintenant
-            </a>
-        </div>
-    </section>
-
-    <section id="apropos" class="py-24 bg-tech-card">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="apropos" class="py-24 relative z-10 bg-drone-dark/50 border-y border-white/5">
+        <div class="max-w-7xl mx-auto px-6">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                <div>
-                    <div class="w-full h-80 bg-slate-800 rounded-xl relative overflow-hidden group">
-                        <img src="https://images.unsplash.com/photo-1508614589041-895b88991e3e?q=80&w=2000&auto=format&fit=crop" alt="Drone en vol" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                        <div class="absolute inset-0 bg-gradient-to-t from-tech-dark to-transparent opacity-60"></div>
-                        <div class="absolute bottom-6 left-6">
-                            <h3 class="text-2xl font-bold text-white">Précision & Technologie</h3>
+                <div class="reveal">
+                    <h2 class="text-4xl font-bold text-white mb-2">NOTRE ÉQUIPEMENT</h2>
+                    <p class="text-drone-cyan font-tech tracking-widest uppercase text-sm mb-8">La pointe de la technologie</p>
+                    <p class="text-slate-400 mb-6 leading-relaxed">
+                        Chez OMNIDRONE S&B, nous utilisons exclusivement des équipements de calibre professionnel pour garantir des résultats à la hauteur de vos exigences. Notre flotte est conçue pour opérer dans des environnements complexes tout en maintenant une qualité d'image exceptionnelle et une sécurité absolue.
+                    </p>
+                    
+                    <div class="space-y-6 mt-10 font-tech text-sm">
+                        <div>
+                            <div class="flex justify-between text-white mb-2">
+                                <span>RÉSOLUTION VIDÉO (4K/5.4K)</span>
+                                <span class="text-drone-cyan">100%</span>
+                            </div>
+                            <div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-drone-cyan shadow-[0_0_10px_#00f2ff] w-full"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-white mb-2">
+                                <span>PRÉCISION GPS / RTK</span>
+                                <span class="text-drone-cyan">98%</span>
+                            </div>
+                            <div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-drone-cyan shadow-[0_0_10px_#00f2ff] w-[98%]"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-white mb-2">
+                                <span>STABILITÉ EN VOL (Gimbal)</span>
+                                <span class="text-drone-cyan">99%</span>
+                            </div>
+                            <div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-drone-cyan shadow-[0_0_10px_#00f2ff] w-[99%]"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div>
-                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">À propos de nous</h2>
-                    <p class="text-slate-300 mb-6 text-lg">
-                        <strong>OMNIDRONE S&B</strong> est une entreprise spécialisée dans les prises de vue aériennes professionnelles basée à Sherbrooke.
-                    </p>
-                    <p class="text-slate-400 mb-6">
-                        Notre mission est simple : offrir des images de haute qualité qui permettent à nos clients de se démarquer et d'attirer plus d'attention sur leurs projets de construction, d'immobilier ou commerciaux.
-                    </p>
-                    <p class="text-slate-400 mb-8">
-                        Nous combinons technologie de pointe, créativité et professionnalisme rigoureux pour livrer des résultats exceptionnels qui répondent aux standards de l'industrie.
-                    </p>
-                    <div class="border-l-4 border-tech-accent pl-4">
-                        <p class="text-white font-semibold italic">
-                            🎯 "Notre objectif principal : votre satisfaction totale et la réussite de vos projets."
-                        </p>
+                
+                <div class="reveal delay-200 relative">
+                    <div class="absolute inset-0 bg-drone-cyan/20 blur-[100px] rounded-full"></div>
+                    <div class="relative glass p-4 rounded-3xl border border-drone-cyan/30 animate-float">
+                        <img src="https://images.unsplash.com/photo-1524143986875-3b098d78b363?q=80&w=2000&auto=format&fit=crop" alt="Technologie de Drone Professionnel" class="rounded-2xl w-full object-cover h-[400px] grayscale hover:grayscale-0 transition-all duration-700">
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="contact" class="py-24 bg-tech-dark">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Contactez-nous</h2>
-                <p class="text-slate-400">Besoin d'un service de drone professionnel ? Nous sommes disponibles pour discuter de votre projet et vous proposer la meilleure solution.</p>
+<section id="secteurs" class="py-24 relative z-10">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="reveal text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold text-white mb-2">SECTEURS DESSERVIS</h2>
+                <p class="text-drone-cyan font-tech tracking-widest uppercase text-sm">Nos domaines d'expertise</p>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="lg:col-span-1 space-y-6">
-                    <div class="bg-tech-card p-6 rounded-xl border border-slate-800 flex items-start gap-4">
-                        <div class="bg-tech-dark p-3 rounded-lg">
-                            <i class="fa-solid fa-location-dot text-xl text-tech-accent"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-white font-bold mb-1">Zone de service</h4>
-                            <p class="text-slate-400">Sherbrooke et environs</p>
-                        </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="reveal gallery-item relative h-64 rounded-2xl overflow-hidden group cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1473968512647-3e447244af8f?q=80&w=800&auto=format&fit=crop" alt="Photographie immobilière par drone" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-drone-dark via-drone-dark/40 to-transparent opacity-90 transition-opacity duration-300"></div>
+                    <div class="absolute bottom-4 left-4 transition-all duration-300">
+                        <p class="text-drone-cyan font-tech text-sm">IMMOBILIER</p>
+                        <p class="text-white font-bold">Mise en valeur de propriétés</p>
                     </div>
-                    
-                    <div class="bg-tech-card p-6 rounded-xl border border-slate-800 flex items-start gap-4">
-                        <div class="bg-tech-dark p-3 rounded-lg">
-                            <i class="fa-solid fa-phone text-xl text-tech-accent"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-white font-bold mb-1">Téléphone</h4>
-                            <p class="text-slate-400"><a href="tel:4386864965" class="hover:text-tech-accent transition-colors">438 686 4965</a></p>
-                        </div>
+                </div>
+                
+                <div class="reveal delay-100 gallery-item relative h-64 rounded-2xl overflow-hidden group cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=800&auto=format&fit=crop" alt="Suivi de chantier de construction par drone" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-drone-dark via-drone-dark/40 to-transparent opacity-90 transition-opacity duration-300"></div>
+                    <div class="absolute bottom-4 left-4 transition-all duration-300">
+                        <p class="text-drone-cyan font-tech text-sm">CONSTRUCTION</p>
+                        <p class="text-white font-bold">Suivi et inspection de chantiers</p>
                     </div>
+                </div>
+                
+                <div class="reveal delay-200 gallery-item relative h-64 rounded-2xl overflow-hidden group cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1508614589041-895b88991e3e?q=80&w=800&auto=format&fit=crop" alt="Vidéo promotionnelle par drone" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-drone-dark via-drone-dark/40 to-transparent opacity-90 transition-opacity duration-300"></div>
+                    <div class="absolute bottom-4 left-4 transition-all duration-300">
+                        <p class="text-drone-cyan font-tech text-sm">CORPORATIF</p>
+                        <p class="text-white font-bold">Vidéos promotionnelles</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                    <div class="bg-tech-card p-6 rounded-xl border border-slate-800 flex items-start gap-4">
-                        <div class="bg-tech-dark p-3 rounded-lg">
-                            <i class="fa-solid fa-envelope text-xl text-tech-accent"></i>
+    <section id="offre" class="py-16 relative z-10">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="reveal relative rounded-3xl overflow-hidden p-10 md:p-16 text-center border border-orange-500/30 bg-gradient-to-br from-orange-950/40 to-drone-card shadow-[0_0_50px_rgba(249,115,22,0.05)]">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-orange-500 to-transparent"></div>
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">OFFRE SPÉCIALE</h2>
+                <div class="text-6xl md:text-7xl font-bold text-orange-500 mb-4 drop-shadow-[0_0_15px_rgba(249,115,22,0.5)]">99$</div>
+                <p class="text-lg text-slate-300 mb-8 max-w-xl mx-auto">Première captation vidéo brute pour tester l'impact aérien sur votre entreprise.</p>
+                <a href="#contact" class="inline-block bg-orange-500 text-white px-10 py-4 rounded-xl font-bold hover:bg-orange-400 hover:-translate-y-1 transition-all shadow-[0_0_20px_rgba(249,115,22,0.3)]">
+                    <i class="fa-solid fa-tag mr-2"></i> Profiter de l'offre
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq" class="py-24 relative z-10 bg-drone-dark/50 border-t border-white/5">
+        <div class="max-w-4xl mx-auto px-6">
+            <div class="reveal text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold text-white mb-2">FOIRE AUX QUESTIONS</h2>
+                <p class="text-drone-cyan font-tech tracking-widest uppercase text-sm">Ce que nos clients demandent le plus souvent</p>
+            </div>
+
+            <div class="space-y-4">
+                <div class="reveal glass rounded-2xl overflow-hidden">
+                    <details class="p-6 group cursor-pointer">
+                        <summary class="flex items-center justify-between text-white font-bold font-tech outline-none">
+                            <span class="pr-6">Avez-vous les certifications requises par Transports Canada ?</span>
+                            <span class="transition-transform duration-300 text-slate-500 group-hover:text-drone-cyan">
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </span>
+                        </summary>
+                        <div class="mt-4 text-slate-400 text-sm leading-relaxed border-t border-white/10 pt-4">
+                            Absolument. OMNIDRONE S&B possède toutes les licences de pilote de drone (opérations avancées) requises par la loi. Nous nous occupons également de toutes les demandes d'autorisation de vol en espace aérien contrôlé avant chaque mandat.
+                        </div>
+                    </details>
+                </div>
+
+                <div class="reveal delay-100 glass rounded-2xl overflow-hidden">
+                    <details class="p-6 group cursor-pointer">
+                        <summary class="flex items-center justify-between text-white font-bold font-tech outline-none">
+                            <span class="pr-6">Quel est le délai de livraison des fichiers ?</span>
+                            <span class="transition-transform duration-300 text-slate-500 group-hover:text-drone-cyan">
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </span>
+                        </summary>
+                        <div class="mt-4 text-slate-400 text-sm leading-relaxed border-t border-white/10 pt-4">
+                            Les fichiers bruts (photos et vidéos) sont généralement transmis dans un délai de 24 à 48 heures via un lien de téléchargement sécurisé. Si votre projet inclut du montage vidéo complet ou de la modélisation 3D, le délai habituel est de 3 à 5 jours ouvrables.
+                        </div>
+                    </details>
+                </div>
+
+                <div class="reveal delay-200 glass rounded-2xl overflow-hidden">
+                    <details class="p-6 group cursor-pointer">
+                        <summary class="flex items-center justify-between text-white font-bold font-tech outline-none">
+                            <span class="pr-6">Est-il possible de faire voler un drone sous la pluie ou en hiver ?</span>
+                            <span class="transition-transform duration-300 text-slate-500 group-hover:text-drone-cyan">
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </span>
+                        </summary>
+                        <div class="mt-4 text-slate-400 text-sm leading-relaxed border-t border-white/10 pt-4">
+                            Les vols en hiver sont tout à fait possibles. En revanche, par mesure de sécurité pour nos équipements et pour la qualité des images, nous ne volons pas sous la pluie, la neige abondante, ou lors de vents dépassant 35 km/h. Dans ce cas, nous reprogrammons la séance sans frais supplémentaires.
+                        </div>
+                    </details>
+                </div>
+
+                <div class="reveal delay-300 glass rounded-2xl overflow-hidden">
+                    <details class="p-6 group cursor-pointer">
+                        <summary class="flex items-center justify-between text-white font-bold font-tech outline-none">
+                            <span class="pr-6">Comment se déroule un mandat avec vous ?</span>
+                            <span class="transition-transform duration-300 text-slate-500 group-hover:text-drone-cyan">
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </span>
+                        </summary>
+                        <div class="mt-4 text-slate-400 text-sm leading-relaxed border-t border-white/10 pt-4">
+                            1. Discussion de vos besoins et analyse de l'espace aérien.<br>
+                            2. Déploiement sur le site et inspection de sécurité.<br>
+                            3. Captation selon vos directives.<br>
+                            4. Traitement et transmission des données (photos, vidéos ou modèles) à votre équipe.
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="py-24 relative z-10 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="reveal flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+                <div>
+                    <h2 class="text-4xl md:text-5xl font-bold text-white mb-2">CONTACTEZ-NOUS</h2>
+                    <p class="text-drone-cyan font-tech tracking-widest uppercase text-sm">Discutons de votre projet</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="reveal delay-100 glass p-6 rounded-2xl flex items-center gap-4 group hover:border-drone-cyan transition-colors">
+                        <div class="w-12 h-12 bg-drone-dark rounded-xl flex items-center justify-center border border-drone-cyan/30 group-hover:border-drone-cyan group-hover:shadow-[0_0_15px_rgba(0,242,255,0.4)] transition-all">
+                            <i class="fa-solid fa-location-dot text-drone-cyan"></i>
                         </div>
                         <div>
-                            <h4 class="text-white font-bold mb-1">Courriel</h4>
-                            <p class="text-slate-400"><a href="mailto:aboubacarsompa1992@gmail.com" class="hover:text-tech-accent transition-colors break-all">aboubacarsompa1992@gmail.com</a></p>
+                            <p class="text-xs font-tech text-slate-500 mb-1">RÉGION DESSERVIE</p>
+                            <p class="text-white font-bold">Sherbrooke, QC</p>
+                        </div>
+                    </div>
+                    <div class="reveal delay-200 glass p-6 rounded-2xl flex items-center gap-4 group hover:border-drone-cyan transition-colors">
+                        <div class="w-12 h-12 bg-drone-dark rounded-xl flex items-center justify-center border border-drone-cyan/30 group-hover:border-drone-cyan group-hover:shadow-[0_0_15px_rgba(0,242,255,0.4)] transition-all">
+                            <i class="fa-solid fa-phone text-drone-cyan"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-tech text-slate-500 mb-1">TÉLÉPHONE</p>
+                            <a href="tel:4386864965" class="text-white font-bold hover:text-drone-cyan transition-colors">438 686 4965</a>
+                        </div>
+                    </div>
+                    <div class="reveal delay-300 glass p-6 rounded-2xl flex items-center gap-4 group hover:border-drone-cyan transition-colors">
+                        <div class="w-12 h-12 bg-drone-dark rounded-xl flex items-center justify-center border border-drone-cyan/30 group-hover:border-drone-cyan group-hover:shadow-[0_0_15px_rgba(0,242,255,0.4)] transition-all">
+                            <i class="fa-solid fa-envelope text-drone-cyan"></i>
+                        </div>
+                        <div class="overflow-hidden">
+                            <p class="text-xs font-tech text-slate-500 mb-1">COURRIEL</p>
+                            <a href="mailto:aboubacarsompa1992@gmail.com" class="text-white font-bold text-sm truncate block hover:text-drone-cyan transition-colors">aboubacarsompa1992@gmail.com</a>
                         </div>
                     </div>
                 </div>
 
-                <div class="lg:col-span-2 bg-tech-card p-8 rounded-xl border border-slate-800">
-                    <h3 class="text-2xl font-bold text-white mb-6">Obtenez une soumission gratuite</h3>
-                    
-                    <form action="https://formspree.io/f/mrerjkaa" method="POST" class="space-y-6">
+                <div class="lg:col-span-2 reveal delay-400">
+                    <form action="https://formspree.io/f/mrerjkaa" method="POST" class="glass p-8 rounded-3xl space-y-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label for="name" class="block text-sm font-medium text-slate-400 mb-2">Nom complet</label>
-                                <input type="text" id="name" name="nom" required class="w-full bg-tech-dark border border-slate-700 rounded-md px-4 py-3 text-white focus:outline-none focus:border-tech-accent focus:ring-1 focus:ring-tech-accent transition-colors" placeholder="Votre nom">
+                                <label class="font-tech text-xs text-drone-cyan mb-2 block">Nom complet</label>
+                                <input type="text" name="nom" required class="w-full glass-input rounded-xl px-4 py-3" placeholder="Votre nom">
                             </div>
                             <div>
-                                <label for="entreprise" class="block text-sm font-medium text-slate-400 mb-2">Entreprise (Optionnel)</label>
-                                <input type="text" id="entreprise" name="entreprise" class="w-full bg-tech-dark border border-slate-700 rounded-md px-4 py-3 text-white focus:outline-none focus:border-tech-accent focus:ring-1 focus:ring-tech-accent transition-colors" placeholder="Nom de l'entreprise">
+                                <label class="font-tech text-xs text-drone-cyan mb-2 block">Entreprise (Optionnel)</label>
+                                <input type="text" name="entreprise" class="w-full glass-input rounded-xl px-4 py-3" placeholder="Nom de l'entreprise">
                             </div>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label for="email" class="block text-sm font-medium text-slate-400 mb-2">Courriel</label>
-                                <input type="email" id="email" name="email" required class="w-full bg-tech-dark border border-slate-700 rounded-md px-4 py-3 text-white focus:outline-none focus:border-tech-accent focus:ring-1 focus:ring-tech-accent transition-colors" placeholder="votre@email.com">
+                                <label class="font-tech text-xs text-drone-cyan mb-2 block">Courriel</label>
+                                <input type="email" name="email" required class="w-full glass-input rounded-xl px-4 py-3" placeholder="votre@email.com">
                             </div>
                             <div>
-                                <label for="phone" class="block text-sm font-medium text-slate-400 mb-2">Téléphone</label>
-                                <input type="tel" id="phone" name="telephone" class="w-full bg-tech-dark border border-slate-700 rounded-md px-4 py-3 text-white focus:outline-none focus:border-tech-accent focus:ring-1 focus:ring-tech-accent transition-colors" placeholder="(123) 456-7890">
+                                <label class="font-tech text-xs text-drone-cyan mb-2 block">Téléphone</label>
+                                <input type="tel" name="telephone" class="w-full glass-input rounded-xl px-4 py-3" placeholder="(123) 456-7890">
                             </div>
                         </div>
                         <div>
-                            <label for="message" class="block text-sm font-medium text-slate-400 mb-2">Détails de votre projet</label>
-                            <textarea id="message" name="message" rows="4" required class="w-full bg-tech-dark border border-slate-700 rounded-md px-4 py-3 text-white focus:outline-none focus:border-tech-accent focus:ring-1 focus:ring-tech-accent transition-colors" placeholder="Décrivez vos besoins (ex: inspection de toiture commerciale, vidéo promotionnelle immobilière...)"></textarea>
+                            <label class="font-tech text-xs text-drone-cyan mb-2 block">Détails de votre projet</label>
+                            <textarea name="message" rows="4" required class="w-full glass-input rounded-xl px-4 py-3 resize-none" placeholder="Décrivez vos besoins (ex: inspection de toiture commerciale, vidéo immobilière...)"></textarea>
                         </div>
-                        <button type="submit" class="w-full bg-tech-accent hover:bg-tech-accentHover text-white font-bold py-4 rounded-md transition-all glow">
-                            Envoyer la demande
+                        <button type="submit" class="w-full bg-drone-cyan text-drone-dark font-tech font-bold py-4 rounded-xl hover:bg-white transition-all shadow-[0_0_20px_rgba(0,242,255,0.2)] hover:shadow-[0_0_30px_rgba(255,255,255,0.6)] flex justify-center items-center gap-2">
+                            <i class="fa-solid fa-paper-plane"></i> ENVOYER LE MESSAGE
                         </button>
                     </form>
                 </div>
@@ -283,32 +441,67 @@
         </div>
     </section>
 
-    <footer class="bg-tech-dark border-t border-slate-800 py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-2">
-                <img src="logo.png" alt="OMNIDRONE S&B Logo" class="h-19 w-auto grayscale opacity-70">
+    <footer class="py-10 border-t border-white/5 relative z-10 bg-drone-dark">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-plane-up text-drone-cyan text-2xl"></i>
+                <span class="font-tech text-white text-lg">OMNIDRONE S&B</span>
             </div>
-            <p class="text-slate-500 text-sm text-center md:text-left">
-                &copy; 2026 OMNIDRONE S&B. Tous droits réservés. Sherbrooke, QC. <br>
-                Conception web par <span class="text-white"><a href="roymarketing.ca">Roy marketing</a></span>
+            <p class="text-sm text-slate-500 text-center md:text-left">
+                © 2026 Tous droits réservés. Base de lancement: Sherbrooke, QC.
             </p>
+            <div class="text-xs font-tech text-slate-500">
+                PRODUIT PAR <a href="roymarketing.ca" class="text-white hover:text-drone-cyan transition-colors">ROY MARKETING</a>
+            </div>
         </div>
     </footer>
 
     <script>
-        // Mobile Menu Toggle
-        const btn = document.getElementById('mobile-menu-btn');
-        const menu = document.getElementById('mobile-menu');
-
-        btn.addEventListener('click', () => {
-            menu.classList.toggle('hidden');
+        // Effet de suivi de souris
+        const blur = document.getElementById('cursor-blur');
+        document.addEventListener('mousemove', (e) => {
+            blur.style.left = e.clientX + 'px';
+            blur.style.top = e.clientY + 'px';
         });
 
-        // Close mobile menu on link click
-        menu.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                menu.classList.add('hidden');
+        // Scroll Reveal Intersection Observer
+        const observerOptions = { threshold: 0.15, rootMargin: "0px 0px -50px 0px" };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
             });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Navigation style update on scroll
+        const nav = document.querySelector('nav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                nav.classList.add('backdrop-blur-md', 'bg-drone-dark/80');
+            } else {
+                nav.classList.remove('backdrop-blur-md', 'bg-drone-dark/80');
+            }
+        });
+
+        // FAQ auto-close (ferme les autres onglets quand on en ouvre un nouveau)
+        const details = document.querySelectorAll("details");
+        details.forEach((targetDetail) => {
+            targetDetail.addEventListener("click", () => {
+                details.forEach((detail) => {
+                    if (detail !== targetDetail) {
+                        detail.removeAttribute("open");
+                    }
+                });
+            });
+        });
+
+        // Menu mobile simple toggle
+        const btn = document.getElementById('mobile-menu-btn');
+        btn.addEventListener('click', () => {
+            alert("Intégration du menu mobile à configurer selon vos préférences !");
         });
     </script>
 </body>
