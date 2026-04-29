@@ -93,27 +93,38 @@
 
     <div id="cursor-blur"></div>
 
-    <nav class="fixed w-full z-50 transition-all duration-500 py-4 px-6">
-        <div class="max-w-7xl mx-auto flex justify-between items-center glass rounded-2xl px-6 py-3 border-drone-cyan/20">
-            <a href="#accueil" class="flex items-center gap-3 group">
-                <div class="w-10 h-10 bg-drone-cyan rounded-lg flex items-center justify-center animate-pulse group-hover:shadow-[0_0_20px_rgba(0,242,255,0.8)] transition-all">
-                    <i class="fa-solid fa-plane-up text-drone-dark text-xl transform group-hover:rotate-45 transition-transform"></i>
-                </div>
-                <span class="font-tech text-white tracking-tighter text-xl">OMNIDRONE <span class="text-drone-cyan text-sm">S&B</span></span>
-            </a>
-            
-            <div class="hidden lg:flex space-x-6 items-center font-tech text-xs uppercase tracking-widest">
-                <a href="#services" class="hover:text-drone-cyan transition-colors">Services</a>
-                <a href="#apropos" class="hover:text-drone-cyan transition-colors">Équipement</a>
-                <a href="#galerie" class="hover:text-drone-cyan transition-colors">Réalisations</a>
-                <a href="#faq" class="hover:text-drone-cyan transition-colors">FAQ</a>
-                <a href="#offre" class="text-orange-500 hover:text-orange-400 transition-colors">Offre 🔥</a>
-                <a href="#contact" class="bg-drone-cyan text-drone-dark px-6 py-2 rounded-full font-bold hover:scale-105 hover:shadow-[0_0_20px_rgba(0,242,255,0.4)] transition-all ml-4">Contact</a>
+<nav class="fixed w-full z-50 transition-all duration-500 py-4 px-6">
+    <div class="max-w-7xl mx-auto flex justify-between items-center glass rounded-2xl px-6 py-3 border-drone-cyan/20">
+        <a href="#accueil" class="flex items-center gap-3 group">
+            <div class="w-10 h-10 bg-drone-cyan rounded-lg flex items-center justify-center animate-pulse group-hover:shadow-[0_0_20px_rgba(0,242,255,0.8)] transition-all p-1.5">
+                <img src="logo.svg" alt="OMNIDRONE S&B Logo" class="w-full h-full object-contain transform group-hover:rotate-12 transition-transform">
             </div>
-            
-            <button id="mobile-menu-btn" class="lg:hidden text-drone-cyan hover:scale-110 transition-transform"><i class="fa-solid fa-bars-staggered text-2xl"></i></button>
+            <span class="font-tech text-white tracking-tighter text-xl">OMNIDRONE <span class="text-drone-cyan text-sm">S&B</span></span>
+        </a>
+        
+        <div class="hidden lg:flex space-x-6 items-center font-tech text-xs uppercase tracking-widest">
+            <a href="#services" class="hover:text-drone-cyan transition-colors">Services</a>
+            <a href="#apropos" class="hover:text-drone-cyan transition-colors">Équipement</a>
+            <a href="#secteurs" class="hover:text-drone-cyan transition-colors">Secteurs</a>
+            <a href="#faq" class="hover:text-drone-cyan transition-colors">FAQ</a>
+            <a href="#offre" class="text-orange-500 hover:text-orange-400 transition-colors">Offre 🔥</a>
+            <a href="#contact" class="bg-drone-cyan text-drone-dark px-6 py-2 rounded-full font-bold hover:scale-105 hover:shadow-[0_0_20px_rgba(0,242,255,0.4)] transition-all ml-4">Contact</a>
         </div>
-    </nav>
+        
+        <button id="mobile-menu-btn" class="lg:hidden text-drone-cyan hover:scale-110 transition-transform relative z-50">
+            <i class="fa-solid fa-bars-staggered text-2xl"></i>
+        </button>
+    </div>
+
+    <div id="mobile-menu" class="lg:hidden absolute top-24 left-6 right-6 glass rounded-2xl border border-drone-cyan/20 overflow-hidden opacity-0 pointer-events-none -translate-y-4 transition-all duration-300 flex flex-col font-tech text-sm uppercase tracking-widest text-center shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
+        <a href="#services" class="mobile-link py-4 border-b border-white/5 text-slate-300 hover:bg-white/5 hover:text-drone-cyan transition-colors">Services</a>
+        <a href="#apropos" class="mobile-link py-4 border-b border-white/5 text-slate-300 hover:bg-white/5 hover:text-drone-cyan transition-colors">Équipement</a>
+        <a href="#secteurs" class="mobile-link py-4 border-b border-white/5 text-slate-300 hover:bg-white/5 hover:text-drone-cyan transition-colors">Secteurs</a>
+        <a href="#faq" class="mobile-link py-4 border-b border-white/5 text-slate-300 hover:bg-white/5 hover:text-drone-cyan transition-colors">FAQ</a>
+        <a href="#offre" class="mobile-link py-4 border-b border-white/5 text-orange-500 hover:bg-white/5 hover:text-orange-400 transition-colors">Offre 🔥</a>
+        <a href="#contact" class="mobile-link py-4 bg-drone-cyan/10 text-drone-cyan font-bold hover:bg-drone-cyan/20 transition-colors">Contact</a>
+    </div>
+</nav>
 
     <section id="accueil" class="relative h-screen flex items-center justify-center overflow-hidden">
         <div class="absolute inset-0 z-0">
@@ -498,11 +509,39 @@
             });
         });
 
-        // Menu mobile simple toggle
+       // Menu mobile fonctionnel
         const btn = document.getElementById('mobile-menu-btn');
-        btn.addEventListener('click', () => {
-            alert("Intégration du menu mobile à configurer selon vos préférences !");
+        const mobileMenu = document.getElementById('mobile-menu');
+        const icon = btn.querySelector('i');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        function toggleMenu() {
+            const isOpen = mobileMenu.classList.contains('opacity-100');
+            
+            if (isOpen) {
+                // Fermer le menu
+                mobileMenu.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                mobileMenu.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4');
+                icon.classList.replace('fa-xmark', 'fa-bars-staggered');
+            } else {
+                // Ouvrir le menu
+                mobileMenu.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-4');
+                mobileMenu.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                icon.classList.replace('fa-bars-staggered', 'fa-xmark');
+            }
+        }
+
+        btn.addEventListener('click', toggleMenu);
+
+        // Fermer le menu automatiquement quand on clique sur un lien
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if(mobileMenu.classList.contains('opacity-100')) {
+                    toggleMenu();
+                }
+            });
         });
     </script>
+    
 </body>
 </html>
